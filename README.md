@@ -1,2 +1,2 @@
-# godot-holepuncher-example-project
-Example project for godot holepuncher plugin
+# Godot Holepuncher Example Project
+ 
