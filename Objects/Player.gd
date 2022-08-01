@@ -1,6 +1,7 @@
 extends KinematicBody2D
-#NOTE: Once the players are connected, you use normal godot networking.
-#What follows is a very basic implementation of a player with godot networking.
+#NOTE: Once the players are connected, the connection is straight peer to peer, and you use regular godot networking
+#Here I've made a player that just broadcasts its position to all other peers
+#This is not a great player networking system, it's just to show that it's working
 
 var speed = 200
 
@@ -13,4 +14,4 @@ func _physics_process(delta):
 		axis.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
 		axis.y = int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))
 		move_and_slide(axis*speed)
-		rpc_unreliable("_set_position", global_transform.origin)
+		rpc_unreliable("_set_position", global_transform.origin) #Send signal to other clients

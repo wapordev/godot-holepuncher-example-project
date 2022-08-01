@@ -9,9 +9,8 @@ script = ExtResource( 2 )
 
 [node name="HolePunch" type="Node" parent="."]
 script = ExtResource( 1 )
-rendevouz_address = "Put server ip here"
-rendevouz_port = 9057
 MAX_PLAYER_COUNT = 4
+local_testing = true
 
 [node name="FailTimer" type="Timer" parent="."]
 one_shot = true
@@ -74,9 +73,6 @@ text = "Playerlist: (not yet implemented)"
 [node name="MainUI" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ButtonJoin" type="Button" parent="MainUI"]
 margin_left = 384.0
