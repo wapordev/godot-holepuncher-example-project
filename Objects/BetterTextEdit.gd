@@ -34,11 +34,11 @@ func _on_BetterTextEdit_text_changed():
 		temp = temp.to_ascii_buffer()
 		for i in range(temp.size()):
 			if temp[i] > 122:
-				temp.remove(i)
+				temp.remove_at(i)
 			elif not asciisymbols and temp[i] in symbols:
-				temp.remove(i)
+				temp.remove_at(i)
 			elif not asciinums and temp[i] in nums:
-				temp.remove(i)
+				temp.remove_at(i)
 		temp = temp.get_string_from_ascii()
 	text = temp
 	$Label.text = temp
