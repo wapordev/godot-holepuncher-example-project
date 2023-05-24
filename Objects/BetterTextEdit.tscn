@@ -3,10 +3,10 @@
 [ext_resource path="res://Objects/BetterTextEdit.gd" type="Script" id=1]
 
 [node name="BetterTextEdit" type="TextEdit"]
-margin_right = 104.0
-margin_bottom = 40.0
-custom_colors/caret_color = Color( 0, 0, 0, 0 )
-custom_colors/font_color = Color( 0, 0, 0, 0 )
+offset_right = 104.0
+offset_bottom = 40.0
+theme_override_colors/caret_color = Color( 0, 0, 0, 0 )
+theme_override_colors/font_color = Color( 0, 0, 0, 0 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_colors/font_color = Color( 0.333333, 0.333333, 0.333333, 1 )
+theme_override_colors/font_color = Color( 0.333333, 0.333333, 0.333333, 1 )
 text = "Here's a hint!"
 align = 1
 valign = 1

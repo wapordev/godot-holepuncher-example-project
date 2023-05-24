@@ -1,16 +1,17 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://drr8jwrm6y2d5"]
 
-[ext_resource path="res://addons/Holepunch/holepunch_node.gd" type="Script" id=1]
-[ext_resource path="res://Scenes/Lobby.gd" type="Script" id=2]
-[ext_resource path="res://Objects/BetterTextEdit.tscn" type="PackedScene" id=3]
+[ext_resource type="Script" path="res://addons/Holepunch/holepunch_node.gd" id="1"]
+[ext_resource type="Script" path="res://Scenes/Lobby.gd" id="2"]
+[ext_resource type="PackedScene" path="res://Objects/BetterTextEdit.tscn" id="3"]
 
 [node name="Lobby" type="Node"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="HolePunch" type="Node" parent="."]
-script = ExtResource( 1 )
+script = ExtResource("1")
+rendevouz_address = "16.170.208.12"
+rendevouz_port = 4000
 MAX_PLAYER_COUNT = 4
-local_testing = true
 
 [node name="FailTimer" type="Timer" parent="."]
 one_shot = true
@@ -19,96 +20,90 @@ one_shot = true
 one_shot = true
 
 [node name="Status" type="Label" parent="."]
-margin_left = 277.0
-margin_top = 64.0
-margin_right = 455.0
-margin_bottom = 116.0
+offset_left = 277.0
+offset_top = 64.0
+offset_right = 455.0
+offset_bottom = 116.0
 text = "Status: "
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ConnectingUI" type="Control" parent="."]
 visible = false
-margin_right = 40.0
-margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="ButtonCancel" type="Button" parent="ConnectingUI"]
-margin_left = 384.0
-margin_top = 512.0
-margin_right = 640.0
-margin_bottom = 576.0
+layout_mode = 0
+offset_left = 384.0
+offset_top = 512.0
+offset_right = 640.0
+offset_bottom = 576.0
 text = "Cancel"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ButtonStart" type="Button" parent="ConnectingUI"]
-margin_left = 384.0
-margin_top = 416.0
-margin_right = 640.0
-margin_bottom = 480.0
+layout_mode = 0
+offset_left = 384.0
+offset_top = 416.0
+offset_right = 640.0
+offset_bottom = 480.0
 text = "Start"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="CodeDisplay" type="Label" parent="ConnectingUI"]
-margin_left = 277.0
-margin_top = 88.0
-margin_right = 353.0
-margin_bottom = 102.0
+layout_mode = 0
+offset_left = 277.0
+offset_top = 88.0
+offset_right = 353.0
+offset_bottom = 102.0
 text = "Room code:"
 
 [node name="Playerlist" type="Label" parent="ConnectingUI"]
-margin_left = 277.0
-margin_top = 112.0
-margin_right = 488.0
-margin_bottom = 126.0
+layout_mode = 0
+offset_left = 277.0
+offset_top = 112.0
+offset_right = 488.0
+offset_bottom = 126.0
 text = "Playerlist: (not yet implemented)"
 
 [node name="MainUI" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="ButtonJoin" type="Button" parent="MainUI"]
-margin_left = 384.0
-margin_top = 512.0
-margin_right = 640.0
-margin_bottom = 576.0
+layout_mode = 0
+offset_left = 384.0
+offset_top = 512.0
+offset_right = 640.0
+offset_bottom = 576.0
 text = "Join"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="ButtonHost" type="Button" parent="MainUI"]
-margin_left = 384.0
-margin_top = 320.0
-margin_right = 640.0
-margin_bottom = 384.0
+layout_mode = 0
+offset_left = 384.0
+offset_top = 320.0
+offset_right = 640.0
+offset_bottom = 384.0
 text = "Host"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="Nickname" parent="MainUI" instance=ExtResource( 3 )]
-margin_left = 384.0
-margin_top = 224.0
-margin_right = 640.0
-margin_bottom = 288.0
+[node name="Nickname" parent="MainUI" instance=ExtResource("3")]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 224.0
+offset_right = 640.0
+offset_bottom = 288.0
 hint = "enter nickname"
 max_length = 10
 asciinums = true
 allcaps = false
 
-[node name="RoomCode" parent="MainUI" instance=ExtResource( 3 )]
-margin_left = 384.0
-margin_top = 416.0
-margin_right = 640.0
-margin_bottom = 480.0
+[node name="RoomCode" parent="MainUI" instance=ExtResource("3")]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 416.0
+offset_right = 640.0
+offset_bottom = 480.0
 hint = "enter roomcode to join"
 
 [connection signal="hole_punched" from="HolePunch" to="." method="_on_HolePunch_hole_punched"]
