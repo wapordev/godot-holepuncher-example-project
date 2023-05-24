@@ -55,7 +55,6 @@ func _on_HolePunch_hole_punched(my_port, hosts_port, hosts_address,num_plyrs):
 	$FailTimer.stop()
 	$Status.text = "Status: Connection successful, starting game!"
 	players_joined = 0
-	await get_tree().idle_frame
 	if $HolePunch.is_host:
 		$ConnectTimer.start(1) #Waiting for port to become unused to start game
 	else:
@@ -98,7 +97,7 @@ func _on_ConnectTimer_timeout():
 	else:
 		var net = ENetMultiplayerPeer.new() #Connect to host
 		net.create_client(host_address, host_port, 0, 0, own_port)
-		get_tree().set_multiplayer_peer(net)
+		multiplayer.set_multiplayer_peer(net)
 	$FailTimer.start(max_connect_time)
 
 func _on_FailTimer_timeout():
