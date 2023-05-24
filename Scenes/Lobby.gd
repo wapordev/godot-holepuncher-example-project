@@ -20,7 +20,7 @@ func _on_ButtonHost_pressed():
 	is_host=true
 	room_code=""
 	for i in range(room_code_length):
-		room_code+=char(randi_range(65,91))
+		room_code+=char(randi_range(65,90))
 	connection_setup()
 	$HolePunch.start_traversal(room_code, true, Globals.client_name, nickname) #Attempt to connect to server as host
 	$Status.text = ("Status: Connecting to server...")
