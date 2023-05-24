@@ -93,7 +93,7 @@ func _on_ConnectTimer_timeout():
 	if $HolePunch.is_host:
 		var net = ENetMultiplayerPeer.new() #Create regular godot peer to peer server
 		net.create_server(own_port, 2) #You can follow regular godot networking tutorials to extend this
-		get_tree().set_multiplayer_peer(net)
+		multiplayer.set_multiplayer_peer(net)
 	else:
 		var net = ENetMultiplayerPeer.new() #Connect to host
 		net.create_client(host_address, host_port, 0, 0, own_port)
