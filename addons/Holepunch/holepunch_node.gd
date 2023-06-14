@@ -213,7 +213,6 @@ func _ping_peer():
 		if peer_address == own_address:
 			peer_address = peer.local_address
 			peer_port = peer.local_port
-			str_own_port = str(get_local_port())
 
 		if not peer.name in peer_stages:
 			peer_stages[peer.name] = 0
