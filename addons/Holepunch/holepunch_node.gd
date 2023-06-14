@@ -23,14 +23,14 @@ signal update_lobby(nicknames,max_players)
 
 #Relay that connection was unsuccessful.
 #The reason for failure will be stored in message.
-#Setup your game to return to initial connection UI, and report fail reason for user feedback. 
-signal return_unsuccessful(message) 
+#Setup your game to return to initial connection UI, and report fail reason for user feedback.
+signal return_unsuccessful(message)
 
 var server_udp = PacketPeerUDP.new()
 var peer_udp = PacketPeerUDP.new()
 
 #Set the rendevouz address to the IP address of your third party server
-@export var rendevouz_address: String = "" 
+@export var rendevouz_address: String = ""
 #Set the rendevouz port to the port of your third party server
 @export var rendevouz_port: int = 43000
 #This is the range of ports you will search if you hear no response from the first port tried
@@ -49,6 +49,7 @@ var recieved_peer_confirms = false
 
 var is_host = false
 
+var own_address
 var own_port
 var peers = {}
 var peer_stages = {}
@@ -77,6 +78,27 @@ const SERVER_OK = "ok:"
 const SERVER_LOBBY = "lobby:" #lobby info, sends list of playernames
 const SERVER_INFO = "peers:"
 const SERVER_CLOSE = "close:" #message from server that you failed to connect, or got disconnected. like host closed lobby or lobby full
+
+# get local address
+func get_local_address():
+	var ip_address :String
+
+	if OS.has_feature("windows"):
+		if OS.has_environment("COMPUTERNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
+	elif OS.has_feature("x11"):
+		if OS.has_environment("HOSTNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+	elif OS.has_feature("OSX"):
+		if OS.has_environment("HOSTNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+
+	return ip_address
+
+func get_local_port():
+	if peer_udp.is_bound():
+		return peer_udp.get_local_port()
+	return server_udp.get_local_port()
 
 #handle incoming messages
 func _process(delta):
@@ -113,8 +135,10 @@ func _process(delta):
 			return
 		if packet_string.begins_with(SERVER_OK):
 			var m = packet_string.split(":")
+			own_address = m[2]
 			own_port = int( m[1] )
 			print("Listening on port: ",own_port)
+			print("Listening on adress: ",own_address)
 			emit_signal('session_registered')
 			if is_host:
 				if !found_server:
@@ -180,6 +204,17 @@ func _ping_peer():
 	var all_confirm = true
 	for p in peers.keys():
 		var peer = peers[p]
+
+		var peer_address = peer.address
+		var peer_port = peer.port
+		var str_own_port = str(own_port)
+
+		# under same NAT we need to go local
+		if peer_address == own_address:
+			peer_address = peer.local_address
+			peer_port = peer.local_port
+			str_own_port = str(get_local_port())
+
 		if not peer.name in peer_stages:
 			peer_stages[peer.name] = 0
 		var stage = peer_stages[peer.name]
@@ -187,18 +222,18 @@ func _ping_peer():
 		if stage < 2: all_confirm = false
 		if stage == 0: #received no contact, send greet
 			if ping_cycles >= response_window:
-				_cascade_peer(peer.address,peer.port)
+				_cascade_peer(peer_address,peer_port)
 			else:
 				print("> send greet!")
-				peer_udp.set_dest_address(peer.address, int(peer.port))
+				peer_udp.set_dest_address(peer_address, int(peer_port))
 				var buffer = PackedByteArray()
-				buffer.append_array((PEER_GREET+client_name+":"+str(own_port)).to_utf8_buffer())
+				buffer.append_array((PEER_GREET+client_name+":"+str_own_port).to_utf8_buffer())
 				peer_udp.put_packet(buffer)
 		if stage == 1 and recieved_peer_greets:
 			print("> send confirm!")
-			peer_udp.set_dest_address(peer.address, int(peer.port))
+			peer_udp.set_dest_address(peer_address, int(peer_port))
 			var buffer = PackedByteArray()
-			buffer.append_array((PEER_CONFIRM+client_name+":"+str(own_port)).to_utf8_buffer())
+			buffer.append_array((PEER_CONFIRM+client_name+":"+str_own_port).to_utf8_buffer())
 			peer_udp.put_packet(buffer)
 		#initiate fail if peer can't connect to you (stage 0), or hasn't connected to all other peers (stage 1)
 		#in this case, all peers should have atleast one unsuccessful connection, and we will throw an error to the game
@@ -211,10 +246,21 @@ func _ping_peer():
 		if is_host:
 			for p in peers.keys():
 				var peer = peers[p]
+
+				var peer_address = peer.address
+				var peer_port = peer.port
+				var str_own_port = str(own_port)
+
+				# under same NAT we need to go local
+				if peer_address == own_address:
+					peer_address = peer.local_address
+					peer_port = peer.local_port
+					str_own_port = str(get_local_port())
+
 				print("> send go!")
-				peer_udp.set_dest_address(peer.address, int(peer.port))
+				peer_udp.set_dest_address(peer_address, int(peer_port))
 				var buffer = PackedByteArray()
-				buffer.append_array((HOST_GO+client_name+":"+str(own_port)).to_utf8_buffer())
+				buffer.append_array((HOST_GO+client_name+":"+str_own_port).to_utf8_buffer())
 				peer_udp.put_packet(buffer)
 			emit_signal("hole_punched", int(own_port), host_port, host_address, peers.size())
 			peer_udp.close()
@@ -223,7 +269,7 @@ func _ping_peer():
 	ping_cycles+=1
 
 #initiate _ping_peer loop, disconnect from server
-func start_peer_contact():	
+func start_peer_contact():
 	print("starting peer contact")
 	server_udp.put_packet("goodbye".to_utf8_buffer()) #this might not always get called because the server_udp is already closed before this. seems to be true from testing.
 	server_udp.close()
@@ -273,7 +319,7 @@ func start_traversal(id, is_player_host, player_name, player_nickname):
 
 	ping_cycles = 0
 	session_id = id
-	
+
 	if (is_host):
 		var buffer = PackedByteArray()
 		buffer.append_array((REGISTER_SESSION+session_id+":"+str(MAX_PLAYER_COUNT)).to_utf8_buffer())
@@ -287,7 +333,7 @@ func start_traversal(id, is_player_host, player_name, player_nickname):
 func _send_client_to_server():
 	await get_tree().create_timer(2.0).timeout #resume upon timeout of 2 second timer; aka wait 2s
 	var buffer = PackedByteArray()
-	buffer.append_array((REGISTER_CLIENT+client_name+":"+session_id+":"+nickname).to_utf8_buffer())
+	buffer.append_array((REGISTER_CLIENT+client_name+":"+session_id+":"+nickname+":"+get_local_address()+":"+str(get_local_port())).to_utf8_buffer())
 	server_udp.close()
 	server_udp.set_dest_address(rendevouz_address, rendevouz_port)
 	server_udp.put_packet(buffer)
