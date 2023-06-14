@@ -213,6 +213,7 @@ func _ping_peer():
 		if peer_address == own_address:
 			peer_address = peer.local_address
 			peer_port = peer.local_port
+			str_own_port = str(get_local_port())
 
 		if not peer.name in peer_stages:
 			peer_stages[peer.name] = 0
@@ -223,7 +224,7 @@ func _ping_peer():
 			if ping_cycles >= response_window:
 				_cascade_peer(peer_address,peer_port)
 			else:
-				print("> send greet!")
+				print("> send greet! ",peer_address, ":",peer_port," ",str_own_port)
 				peer_udp.set_dest_address(peer_address, int(peer_port))
 				var buffer = PackedByteArray()
 				buffer.append_array((PEER_GREET+client_name+":"+str_own_port).to_utf8_buffer())
