@@ -150,10 +150,10 @@ func _process(delta):
 				server_udp.close()
 				packet_string = packet_string.right(-6) #after 'peers:'
 				if packet_string.length() > 2:
-					var clientdata = packet_string.split(",") #this is formatted client:ip:port,client2:ip:port
+					var clientdata = packet_string.split(",") #this is formatted client:ip:port,client2:ip:port:local_ip:local_port
 					for c in clientdata:
 						var m = c.split(":")
-						peers[m[0]] = {"port":m[2], "address":("localhost" if local_testing else m[1]),"hosting":(m[3]=="True"),"name":m[0]}
+						peers[m[0]] = {"port":m[2], "address":("localhost" if local_testing else m[1]),"hosting":(m[3]=="True"),"name":m[0],"local_address":m[3],"local_port":m[4]}
 					recieved_peer_info = true
 					start_peer_contact()
 				else:
