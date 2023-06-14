@@ -172,8 +172,7 @@ func _handle_greet_message(peer_name, peer_port):
 
 #message that a peer has received all other peer's info
 func _handle_confirm_message(peer_name,peer_port):
-	if not peer_name in peer_stages:
-		peer_stages[peer_name] = 0
+	_handle_greet_message(peer_name,peer_port)
 	peer_stages[peer_name] = 2
 
 #message from host to start connection
