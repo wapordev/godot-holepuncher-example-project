@@ -230,7 +230,7 @@ func _ping_peer():
 				buffer.append_array((PEER_GREET+client_name+":"+str_own_port).to_utf8_buffer())
 				peer_udp.put_packet(buffer)
 		if stage == 1 and recieved_peer_greets:
-			print("> send confirm!")
+			print("> send confirm!",peer_address, ":",peer_port," ",str_own_port)
 			peer_udp.set_dest_address(peer_address, int(peer_port))
 			var buffer = PackedByteArray()
 			buffer.append_array((PEER_CONFIRM+client_name+":"+str_own_port).to_utf8_buffer())
