@@ -179,7 +179,17 @@ func _handle_confirm_message(peer_name,peer_port):
 func _handle_go_message(peer_name,peer_port):
 	peer_stages[peer_name] = 2
 	if peers[peer_name].hosting:
-		emit_signal("hole_punched", int(own_port), host_port, host_address, peers.size())
+		var peer = peers[peer_name]
+
+		var cur_peer_address = peer.address
+		var cur_peer_port = peer.port
+
+		# under same NAT we need to go local
+		if cur_peer_address == own_address:
+			cur_peer_address = peer.local_address
+			cur_peer_port = peer.local_port
+
+		emit_signal("hole_punched", int(own_port), int(cur_peer_port), cur_peer_address, peers.size())
 		peer_udp.close()
 		p_timer.stop()
 		set_process(false)
