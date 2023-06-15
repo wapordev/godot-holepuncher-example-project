@@ -4,9 +4,9 @@ var host_player = null
 var host_id
 
 func _ready():
-	host_id = get_tree().get_unique_id()
+	host_id = multiplayer.get_unique_id()
 	host_player = create_player(host_id)
-	var peers = get_tree().get_peers()
+	var peers = multiplayer.get_peers()
 	for peer in peers:
 		create_player(peer)
 
