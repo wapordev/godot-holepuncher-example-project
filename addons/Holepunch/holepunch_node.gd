@@ -109,7 +109,7 @@ func get_local_addresses() -> String:
 		if OS.has_environment("HOSTNAME"):
 			ip_addresses =  IP.resolve_hostname_addresses(str(OS.get_environment("HOSTNAME")),IP.Type.TYPE_IPV4)
 
-	return ",".join(ip_addresses)
+	return "/".join(ip_addresses)
 
 func get_local_port():
 	if peer_udp.is_bound():
@@ -229,7 +229,7 @@ func _ping_peer():
 
 		# under same NAT we need to go local (maybe multiple local address)
 		if peer_address == own_address:
-			peer_addresses = peer.local_address.split(",")
+			peer_addresses = peer.local_address.split("/")
 			peer_port = peer.local_port
 			str_own_port = str(get_local_port())
 
@@ -273,7 +273,7 @@ func _ping_peer():
 
 				# under same NAT we need to go local (maybe multiple local address)
 				if peer_address == own_address:
-					peer_addresses = peer.local_address.split(",")
+					peer_addresses = peer.local_address.split("/")
 					peer_port = peer.local_port
 					str_own_port = str(get_local_port())
 
