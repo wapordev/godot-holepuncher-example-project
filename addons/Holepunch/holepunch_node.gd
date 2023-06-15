@@ -182,6 +182,8 @@ func _handle_greet_message(peer_name, peer_port, peer_address):
 		peer_stages[peer_name] = 0
 	if peer_stages[peer_name] == 0: peer_stages[peer_name] = 1
 	peers[peer_name].port = peer_port
+	# address used to reach us
+	peers[peer_name].address_used = peer_address
 	if peers[peer_name].hosting:
 		host_port=peer_port
 		host_address=peer_address
@@ -281,7 +283,8 @@ func _ping_peer():
 					print("> send go!")
 					peer_udp.set_dest_address(address, int(peer_port))
 					var buffer = PackedByteArray()
-					buffer.append_array((HOST_GO+client_name+":"+str_own_port+":"+address).to_utf8_buffer())
+					# send address used to reach us when sending go
+					buffer.append_array((HOST_GO+client_name+":"+str_own_port+":"+peer.address_used).to_utf8_buffer())
 					peer_udp.put_packet(buffer)
 
 			emit_signal("hole_punched", int(own_port), host_port, host_address, peers.size())
